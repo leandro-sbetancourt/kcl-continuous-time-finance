@@ -2,6 +2,29 @@ from random import random
 import numpy as np
 from scipy import integrate
 from tqdm import tqdm
+from math import floor
+
+
+class RandomWalk:
+    """
+    Defines and simulates a Random Walk
+    """
+    def __init__(self, p, T, Nt):
+        self.p = p
+        self.T = T
+        self.Nt = Nt
+        self.timesteps = np.linspace(0, self.T, num = (Nt+1))
+        
+    def simulate(self, nsims = 1):
+        x = np.zeros((self.Nt+1, nsims))
+        x[0,:] = 0.
+        errs = (np.random.rand(self.Nt, nsims) <= self.p)*2. - 1.
+        for t in range(self.Nt):
+            if floor(self.timesteps[t+1]) > floor(self.timesteps[t]):
+                x[t + 1,:] = x[t,:] + errs[t,:]
+            else:
+                x[t + 1,:] = x[t,:]
+        return x
 
 
 class BrownianMotion:
@@ -13,7 +36,7 @@ class BrownianMotion:
         self.Nt = Nt
         self.timesteps = np.linspace(0, self.T, num = (Nt+1))
         
-    def simulate_BM(self, nsims = 1):
+    def simulate(self, nsims = 1):
         x = np.zeros((self.Nt+1, nsims))
         x[0,:] = 0.
         dt = self.T/(self.Nt)
@@ -22,7 +45,7 @@ class BrownianMotion:
             x[t + 1,:] = x[t,:] + np.sqrt(dt) * errs[t,:]
         return x
 
-
+    
 class ArithmeticBrownianMotion:
     """
     Model parameters for the environment.
@@ -35,7 +58,7 @@ class ArithmeticBrownianMotion:
         self.Nt = Nt
         self.timesteps = np.linspace(0, self.T, num = (Nt+1))
 
-    def simulate_ABM(self, nsims=1):
+    def simulate(self, nsims=1):
         x = np.zeros((self.Nt+1, nsims))
         x[0,:] = self.x0
         dt = self.T/(self.Nt)
@@ -57,7 +80,7 @@ class GeometricBrownianMotion:
         self.Nt = Nt
         self.timesteps = np.linspace(0, self.T, num = (Nt+1))
 
-    def simulate_GBM(self, nsims=1):
+    def simulate(self, nsims=1):
         x = np.zeros((self.Nt+1, nsims))
         x[0,:] = self.x0
         dt = self.T/(self.Nt)
@@ -66,4 +89,4 @@ class GeometricBrownianMotion:
             x[t + 1,:] = x[t,:] * np.exp( dt * (self.mu - 0.5*self.sigma**2) + np.sqrt(dt) * self.sigma * errs[t,:] ) 
         return x
 
-    
+  
