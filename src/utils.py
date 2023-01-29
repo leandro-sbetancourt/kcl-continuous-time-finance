@@ -14,11 +14,12 @@ class RandomWalk:
         self.T = T
         self.Nt = Nt
         self.timesteps = np.linspace(0, self.T, num = (Nt+1))
+        assert self.Nt>self.T, 'The number of steps should be greater than the terminal time'
         
     def simulate(self, nsims = 1):
         x = np.zeros((self.Nt+1, nsims))
         x[0,:] = 0.
-        errs = (np.random.rand(self.Nt, nsims) <= self.p)*2. - 1.
+        errs = (np.random.rand(self.Nt, nsims) <= self.p) * 2. - 1.
         for t in range(self.Nt):
             if floor(self.timesteps[t+1]) > floor(self.timesteps[t]):
                 x[t + 1,:] = x[t,:] + errs[t,:]
